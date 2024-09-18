@@ -13,9 +13,9 @@
 // doesn't do any RX but simulates the data flow.
 //
 //-----------------------------------------------------------------------------
-// Copyright (c) 2020 by OCRA developers This model is the confidential and
-// proprietary property of OCRA developers and the possession or use of this
-// file requires a written license from OCRA developers.
+// Copyright (c) 2020 by MaRGA developers This model is the confidential and
+// proprietary property of MaRGA developers and the possession or use of this
+// file requires a written license from MaRGA developers.
 //------------------------------------------------------------------------------
 
 `ifndef _RX_CHAIN_MODEL_

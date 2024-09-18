@@ -10,9 +10,9 @@
 // Description :
 // Simple testbench for AD5781 model
 //-----------------------------------------------------------------------------
-// Copyright (c) 2020 by OCRA developers This model is the confidential and
-// proprietary property of OCRA developers and the possession or use of this
-// file requires a written license from OCRA developers.
+// Copyright (c) 2020 by MaRGA developers This model is the confidential and
+// proprietary property of MaRGA developers and the possession or use of this
+// file requires a written license from MaRGA developers.
 //------------------------------------------------------------------------------
 
 `ifndef _AD5781_MODEL_TB_
@@ -41,7 +41,7 @@ module ad5781_model_tb;
    reg [23:0] 		word_to_send;
    reg 			err = 0;
    integer 		k;
-   
+
    initial begin
       $dumpfile("icarus_compile/000_ad5781_model_tb.lxt");
       $dumpvars(0, ad5781_model_tb);
@@ -85,7 +85,7 @@ module ad5781_model_tb;
 
       #20 ldacn = 0;
       #20 ldacn = 1;
-      // check DAC output word is as expected      
+      // check DAC output word is as expected
       if (vout != 18'h3dead) begin
 	 $display("%d ns: Unexpected DAC output, expected %x, saw %x.", $time, 18'h3dead, vout);
 	 err <= 1;
@@ -103,7 +103,7 @@ module ad5781_model_tb;
 
       #20 ldacn = 0;
       #20 ldacn = 1;
-      // check DAC output word is as expected      
+      // check DAC output word is as expected
       if (vout != 18'h1cafe) begin
 	 $display("%d ns: Unexpected DAC output, expected %x, saw %x.", $time, 18'h1cafe, vout);
 	 err <= 1;
@@ -122,21 +122,21 @@ module ad5781_model_tb;
       #20 syncn = 1;
       #20 syncn = 0;
 
-      // check DAC output word is as expected      
+      // check DAC output word is as expected
       if (vout != 18'h2beef) begin
 	 $display("%d ns: Unexpected DAC output, expected %x, saw %x.", $time, 18'h2beef, vout);
 	 err <= 1;
       end
 
-      #20 ldacn = 1;      
-      
+      #20 ldacn = 1;
+
       #1000 if (err) begin
 	 $display("THERE WERE ERRORS");
 	 $stop; // to return a nonzero error code if the testbench is later scripted at a higher level
       end
       $finish;
    end
-   
+
    ad5781_model UUT(/*autoinst*/
 		    // Outputs
 		    .sdo		(sdo),
@@ -148,6 +148,6 @@ module ad5781_model_tb;
 		    .ldacn		(ldacn),
 		    .clrn		(clrn),
 		    .resetn		(resetn));
-   
+
 endmodule // ad5781_model_tb
 `endif //  `ifndef _AD5781_MODEL_TB_

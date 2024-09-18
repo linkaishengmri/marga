@@ -4,6 +4,7 @@ proc init_gui { IPINST } {
   #Adding Page
   ipgui::add_page $IPINST -name "Page 0"
 
+  ipgui::add_param $IPINST -name "RX_FIFO_LENGTH" -widget comboBox
 
 }
 
@@ -22,6 +23,15 @@ proc update_PARAM_VALUE.C_S0_AXI_DATA_WIDTH { PARAM_VALUE.C_S0_AXI_DATA_WIDTH } 
 
 proc validate_PARAM_VALUE.C_S0_AXI_DATA_WIDTH { PARAM_VALUE.C_S0_AXI_DATA_WIDTH } {
 	# Procedure called to validate C_S0_AXI_DATA_WIDTH
+	return true
+}
+
+proc update_PARAM_VALUE.RX_FIFO_LENGTH { PARAM_VALUE.RX_FIFO_LENGTH } {
+	# Procedure called to update RX_FIFO_LENGTH when any of the dependent parameters in the arguments change
+}
+
+proc validate_PARAM_VALUE.RX_FIFO_LENGTH { PARAM_VALUE.RX_FIFO_LENGTH } {
+	# Procedure called to validate RX_FIFO_LENGTH
 	return true
 }
 

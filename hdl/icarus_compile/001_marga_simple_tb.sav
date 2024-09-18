@@ -54,7 +54,7 @@ marga_simple_tb.s0_axi_wstrb[3:0]
 @28
 marga_simple_tb.s0_axi_wvalid[0]
 [color] 2
-marga_simple_tb.UUT.fld.aw_en[0]
+marga_simple_tb.UUT.mrd.aw_en[0]
 @1000200
 -s0_axi
 @200

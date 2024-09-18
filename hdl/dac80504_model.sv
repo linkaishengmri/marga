@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------------------
 // Title         : dac80504_model
-// Project       : OCRA
+// Project       : MaRGA
 //-----------------------------------------------------------------------------
 // File          : dac80504_model.sv
 // Author        :   <vlad@arch-ssd>
@@ -10,9 +10,9 @@
 // Description :
 // Behavioural model of the TI DAC80504 DAC
 //-----------------------------------------------------------------------------
-// Copyright (c) 2020 by OCRA developers This model is the confidential and
-// proprietary property of OCRA developers and the possession or use of this
-// file requires a written license from OCRA developers.
+// Copyright (c) 2020 by MaRGA developers This model is the confidential and
+// proprietary property of MaRGA developers and the possession or use of this
+// file requires a written license from MaRGA developers.
 //------------------------------------------------------------------------------
 
 `ifndef _DAC80504_MODEL_
@@ -28,7 +28,7 @@ module dac80504_model(
 		      input 		sdi,
 
 		      output reg 	sdo,
-		      output reg [15:0] vout0, vout1, vout2, vout3 // 
+		      output reg [15:0] vout0, vout1, vout2, vout3 //
 		      );
 
    // internal DAC registers
@@ -38,14 +38,14 @@ module dac80504_model(
    // broadcast and sync control
    wire [3:0] 				dac_brdcast_en = sync_reg[11:8], dac_sync_en = sync_reg[3:0];
 
-   // wire 			  rbuf = ctrl_reg[1], opgnd = ctrl_reg[2], 
+   // wire 			  rbuf = ctrl_reg[1], opgnd = ctrl_reg[2],
    // 				  dactri = ctrl_reg[3], bin2sc = ctrl_reg[4], sdodis = ctrl_reg[5];
    reg [23:0] 				spi_input = 0;
    wire [15:0] 				spi_payload = spi_input[15:0];
    wire [3:0] 				spi_addr = spi_input[19:16];
    reg [5:0] 				spi_counter = 0;
    reg 					read_mode = 0; // TODO: implement readback mode in FSM
-   wire 				spi_transfer_done = spi_counter == 24; // if more than 24 bits sent, will hold most recent 24   
+   wire 				spi_transfer_done = spi_counter == 24; // if more than 24 bits sent, will hold most recent 24
 
    initial begin
       sdo = 0;
@@ -65,7 +65,7 @@ module dac80504_model(
 	 spi_input <= 0;
       end
    end
-   
+
    always @(posedge csn) begin
       if (spi_transfer_done && !read_mode) begin
 	 // $display("addr %d payload %d",spi_addr,spi_payload);
@@ -106,6 +106,6 @@ module dac80504_model(
       if (dac_sync_en[2] && ldacn) vout2 <= dac2_reg;
       if (dac_sync_en[3] && ldacn) vout3 <= dac3_reg;
    end
-   
+
 endmodule // dac80504_model
 `endif //  `ifndef _DAC80504_MODEL_

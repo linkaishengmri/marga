@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------------------
 // Title         : ad5781_model
-// Project       : OCRA
+// Project       : MaRGA
 //-----------------------------------------------------------------------------
 // File          : ad5781_model.sv
 // Author        :   <vlad@arch-ssd>
@@ -10,9 +10,9 @@
 // Description :
 // Behavioural model of the Analog Devices AD5781 DAC
 //-----------------------------------------------------------------------------
-// Copyright (c) 2020 by OCRA developers This model is the confidential and
-// proprietary property of OCRA developers and the possession or use of this
-// file requires a written license from OCRA developers.
+// Copyright (c) 2020 by MaRGA developers This model is the confidential and
+// proprietary property of MaRGA developers and the possession or use of this
+// file requires a written license from MaRGA developers.
 //------------------------------------------------------------------------------
 // Modification history :
 // 31.08.2020 : created

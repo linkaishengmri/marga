@@ -10,9 +10,9 @@
 // Description :
 // Behavioural model of OCRA1 board, specifically its I/O and four AD5781 DACs
 //-----------------------------------------------------------------------------
-// Copyright (c) 2020 by OCRA developers This model is the confidential and
-// proprietary property of OCRA developers and the possession or use of this
-// file requires a written license from OCRA developers.
+// Copyright (c) 2020 by MaRGA developers This model is the confidential and
+// proprietary property of MaRGA developers and the possession or use of this
+// file requires a written license from MaRGA developers.
 //------------------------------------------------------------------------------
 
 `ifndef _OCRA1_MODEL_
@@ -36,7 +36,7 @@ module ocra1_model(
 
    reg 				 clrn = 1, resetn = 1;
    wire 			 sdix, sdiy, sdiz, sdiz2; // inputs from DACs (not connected)
-   
+
    ad5781_model DACX(
 		     // Outputs
 		     .sdo		(sdix),
@@ -72,7 +72,7 @@ module ocra1_model(
 		     .ldacn		(ldacn),
 		     .clrn		(clrn),
 		     .resetn		(resetn));
-   
+
 
    ad5781_model DACZ2(
 		     // Outputs

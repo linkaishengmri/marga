@@ -12,9 +12,9 @@
 // Testbench for GPA-FHDO interface and GPA-FHDO board model
 //
 //-----------------------------------------------------------------------------
-// Copyright (c) 2020 by OCRA developers This model is the confidential and
-// proprietary property of OCRA developers and the possession or use of this
-// file requires a written license from OCRA developers.
+// Copyright (c) 2020 by MaRGA developers This model is the confidential and
+// proprietary property of MaRGA developers and the possession or use of this
+// file requires a written license from MaRGA developers.
 //------------------------------------------------------------------------------
 
 `ifndef _GPA_FHDO_IFACE_TB_
@@ -27,18 +27,18 @@
  `timescale 1ns/1ns
 
 module gpa_fhdo_iface_tb;
-   
-	reg			clk;			
-	reg [31:0]		data_i;	
-	reg [5:0]		spi_clk_div_i;	   
-	reg			valid_i;		
+
+	reg			clk;
+	reg [31:0]		data_i;
+	reg [5:0]		spi_clk_div_i;
+	reg			valid_i;
 
 	//
-	wire			busy_o;			
-	wire			ldacn;			
-	wire			sclk;			
-	wire			sdo;			
-	wire			sdi;			
+	wire			busy_o;
+	wire			ldacn;
+	wire			sclk;
+	wire			sdo;
+	wire			sdi;
 	wire			csn;
         wire 			ncsn = !csn;
         wire [15:0] 			adc_value_o;
@@ -53,10 +53,10 @@ module gpa_fhdo_iface_tb;
 		data_i = 0;
 		valid_i = 0;
 		spi_clk_div_i = 32;
-	   
+
 		#1000 send(1,2,3,4);
-		#20000 send(-1,-2,-3,-4);	   
-	   
+		#20000 send(-1,-2,-3,-4);
+
 		// read adc -- each read obtains the value from the previous read command
 		//
 		// (i.e. reading ch0, ch1, ch2, ch3, ch0 will return
@@ -65,7 +65,7 @@ module gpa_fhdo_iface_tb;
 		#10 data_i = {5'b01000, 2'd0, 1'd0, 24'hC00000};
 		valid_i = 1;
 		#10 valid_i = 0;
-	   
+
 		#80000
 		#10 data_i = {5'b01000, 2'd0, 1'd0, 24'hC10000};
 		valid_i = 1;
@@ -89,9 +89,9 @@ module gpa_fhdo_iface_tb;
 		#80000
 		#10 data_i = {5'b01000, 2'd0, 1'd0, 24'hC00000};
 		valid_i = 1;
-		#10 valid_i = 0;	   
+		#10 valid_i = 0;
 		//
-		
+
 		#20000 send(5,6,7,8);
 
 		// VN: some manual tests, max throughput
@@ -126,7 +126,7 @@ module gpa_fhdo_iface_tb;
 		#10 valid_i = 0;
 		#80000 data_i = {5'd0, 2'd2, 1'd0, 6'h02, 2'd2, inz};
 		valid_i = 1;
-		#10 valid_i = 0; 	 
+		#10 valid_i = 0;
 		#80000 data_i = {5'd0, 2'd3, 1'd1, 6'h02, 2'd3, inz2};
 		valid_i = 1;
 		#10 valid_i = 0;
@@ -144,8 +144,8 @@ gpa_fhdo_iface UUT(
 	.fhd_clk_o  (sclk),
 	.fhd_csn_o	(csn),
 	.adc_value_o(adc_value_o),
-	// Inputs		     
-	.data_i		(data_i),		
+	// Inputs
+	.data_i		(data_i),
 	.valid_i	(valid_i),
 	.fhd_sdi_i		(sdi),
 	.spi_clk_div_i	(spi_clk_div_i[5:0]));
@@ -162,10 +162,10 @@ dac80504_model GPA_FHDO_DAC(
 	.ldacn		(ldacn),
 	.csn		(csn),
 	.sdi		(sdo));
-	
+
 ads8684_model GPA_FHDO_ADC(
 	// Outputs
-	.sdo		(sdi),			 
+	.sdo		(sdi),
 	// Inputs
 	.sclk		(sclk),
 	.csn		(ncsn),
@@ -173,8 +173,8 @@ ads8684_model GPA_FHDO_ADC(
 	.ain_0p		(voutx[15:0]),
 	.ain_1p		(vouty[15:0]),
 	.ain_2p		(voutz[15:0]),
-	.ain_3p		(voutz2[15:0]));	
-	
+	.ain_3p		(voutz2[15:0]));
+
 
 
 endmodule // gpa_fhdo_iface_tb

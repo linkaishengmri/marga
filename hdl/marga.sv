@@ -158,31 +158,32 @@ module marga
    // 14: TX LO 2 phase increment, MSBs and clear bit
    // 15: TX and RX gate control, trigger output, LEDs
    // 16: RX configuration: RX0/RX1 rate settings bus valid, CIC reset and demodulation DDS source
-   wire [15:0] 				      fld_data[23:0];
-   wire [23:0] 				      fld_stb;
-   wire [31:0] 				      fld_status, fld_status_latch;
+   wire [15:0] 				      mrd_data[23:0];
+   wire [23:0] 				      mrd_stb;
+   wire [31:0] 				      mrd_status, mrd_status_latch;
 
-   wire [15:0] 				      grad_ctrl = fld_data[0];
-   wire [15:0] 				      grad_data_lsb = fld_data[1];
-   wire [15:0] 				      grad_data_msb = fld_data[2];
-   wire [15:0] 				      rx0_rate = fld_data[3];
-   wire [15:0] 				      rx1_rate = fld_data[4];
-   wire [15:0] 				      tx0_i = fld_data[5];
-   wire [15:0] 				      tx0_q = fld_data[6];
-   wire [15:0] 				      tx1_i = fld_data[7];
-   wire [15:0] 				      tx1_q = fld_data[8];
-   wire [15:0] 				      lo0_phase_lsb = fld_data[9];
-   wire [15:0] 				      lo0_phase_msb = fld_data[10];
-   wire [15:0] 				      lo1_phase_lsb = fld_data[11];
-   wire [15:0] 				      lo1_phase_msb = fld_data[12];
-   wire [15:0] 				      lo2_phase_lsb = fld_data[13];
-   wire [15:0] 				      lo2_phase_msb = fld_data[14];
-   wire [15:0] 				      gates_leds = fld_data[15];
-   wire [15:0] 				      rx_ctrl = fld_data[16];
+   wire [15:0] 				      grad_ctrl = mrd_data[0];
+   wire [15:0] 				      grad_data_lsb = mrd_data[1];
+   wire [15:0] 				      grad_data_msb = mrd_data[2];
+   wire [15:0] 				      rx0_rate = mrd_data[3];
+   wire [15:0] 				      rx1_rate = mrd_data[4];
+   wire [15:0] 				      tx0_i = mrd_data[5];
+   wire [15:0] 				      tx0_q = mrd_data[6];
+   wire [15:0] 				      tx1_i = mrd_data[7];
+   wire [15:0] 				      tx1_q = mrd_data[8];
+   wire [15:0] 				      lo0_phase_lsb = mrd_data[9];
+   wire [15:0] 				      lo0_phase_msb = mrd_data[10];
+   wire [15:0] 				      lo1_phase_lsb = mrd_data[11];
+   wire [15:0] 				      lo1_phase_msb = mrd_data[12];
+   wire [15:0] 				      lo2_phase_lsb = mrd_data[13];
+   wire [15:0] 				      lo2_phase_msb = mrd_data[14];
+   wire [15:0] 				      gates_leds = mrd_data[15];
+   wire [15:0] 				      rx_ctrl = mrd_data[16];
 
    // Parameters of Axi Slave Bus Interface S0_AXI
    parameter integer 			      C_S0_AXI_DATA_WIDTH = 32;
    parameter integer 			      C_S0_AXI_ADDR_WIDTH = 19;
+   parameter integer			      RX_FIFO_LENGTH = 16384;
    wire 				      clk = s0_axi_aclk;
 
    // Gradient control lines
@@ -193,7 +194,7 @@ module marga
    wire 				      grad_data_valid_msb_en = grad_ctrl[9];
    wire [31:0] 				      grad_data = {grad_data_msb, grad_data_lsb};
 
-   wire 				      grad_data_valid = fld_stb[1] | ( fld_stb[2] & grad_data_valid_msb_en );
+   wire 				      grad_data_valid = mrd_stb[1] | ( mrd_stb[2] & grad_data_valid_msb_en );
    wire 				      ocra1_data_valid = ocra1_en & grad_data_valid;
    wire 				      fhdo_data_valid = fhdo_en & grad_data_valid;
    wire [15:0] 				      fhdo_adc; // ADC data from GPA-FHDO
@@ -201,8 +202,8 @@ module marga
    wire 				      ocra1_busy, ocra1_data_lost;
    wire 				      ocra1_err = ocra1_busy & ocra1_data_valid;
    wire 				      fhdo_err = fhdo_busy & fhdo_data_valid;
-   assign fld_status = {14'd0, fhdo_busy, ocra1_busy, fhdo_adc};
-   assign fld_status_latch = {29'd0, fhdo_err, ocra1_err, ocra1_data_lost};
+   assign mrd_status = {14'd0, fhdo_busy, ocra1_busy, fhdo_adc};
+   assign mrd_status_latch = {29'd0, fhdo_err, ocra1_err, ocra1_data_lost};
 
    // RX control lines
    wire [1:0] rx0_dds_source = rx_ctrl[1:0], rx1_dds_source = rx_ctrl[3:2];
@@ -314,13 +315,13 @@ module marga
 
    ///////////////////////// MARDECODE ////////////////////////////
 
-   mardecode #(.BUFS(24), .RX_FIFO_LENGTH(16384))
-   fld (
+   mardecode #(.BUFS(24), .RX_FIFO_LENGTH(RX_FIFO_LENGTH))
+   mrd (
 	.trig_i(trig_i),
-	.status_i(fld_status), // spare bits available for external status
-	.status_latch_i(fld_status_latch),
-	.data_o(fld_data),
-	.stb_o(fld_stb),
+	.status_i(mrd_status), // spare bits available for external status
+	.status_latch_i(mrd_status_latch),
+	.data_o(mrd_data),
+	.stb_o(mrd_stb),
 
 	.rx0_data(rx0_axis_tdata_i[63:0]),
 	.rx0_valid(rx0_axis_tvalid_i),

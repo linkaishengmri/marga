@@ -10,9 +10,9 @@
 // Description :
 // Behavioural model of GPA-FHDO board, specifically its I/O, DAC and ADC
 //-----------------------------------------------------------------------------
-// Copyright (c) 2020 by OCRA developers This model is the confidential and
-// proprietary property of OCRA developers and the possession or use of this
-// file requires a written license from OCRA developers.
+// Copyright (c) 2020 by MaRGA developers This model is the confidential and
+// proprietary property of MaRGA developers and the possession or use of this
+// file requires a written license from MaRGA developers.
 //------------------------------------------------------------------------------
 
 `ifndef _GPA_FHDO_MODEL_
@@ -50,11 +50,11 @@ module gpa_fhdo_model(
 		     .sclk(clk),
 		     .sdi(sdo),
 		     .sdo(sdi),
-		     
+
 		     .ain_0p(voutx),
 		     .ain_1p(vouty),
 		     .ain_2p(voutz),
 		     .ain_3p(voutz2));
-		     
+
 endmodule // gpa_fhdo_model
 `endif //  `ifndef _GPA_FHDO_MODEL_

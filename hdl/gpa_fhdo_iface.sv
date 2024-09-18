@@ -13,9 +13,9 @@
 // an SPI serialiser for the 4-channel DAC and associated FSM logic.
 //
 //-----------------------------------------------------------------------------
-// Copyright (c) 2020 by OCRA developers This model is the confidential and
-// proprietary property of OCRA developers and the possession or use of this
-// file requires a written license from OCRA developers.
+// Copyright (c) 2020 by MaRGA developers This model is the confidential and
+// proprietary property of MaRGA developers and the possession or use of this
+// file requires a written license from MaRGA developers.
 //------------------------------------------------------------------------------
 
 `ifndef _GPA_FHDO_IFACE_
@@ -29,12 +29,12 @@ module gpa_fhdo_iface(
 		   // data words from gradient memory core
 		   input [31:0] data_i,
 
-		   // data valid flag, should be held high for 1 cycle to initiate a transfer		   
+		   // data valid flag, should be held high for 1 cycle to initiate a transfer
 		   input 	valid_i,
-		   
+
 		   // SPI clock divider
 		   input [5:0] 	spi_clk_div_i,
-		   
+
 		   // ADC output
 		   output reg [15:0] adc_value_o,
 
@@ -46,22 +46,22 @@ module gpa_fhdo_iface(
 
 		   output reg 	busy_o // should be held high while module is carrying out an SPI transfer
 		   );
-		   
+
 	reg [23:0] 			spi_output = 0;
-    wire [15:0] 	    spi_payload = spi_output[15:0];	
+    wire [15:0] 	    spi_payload = spi_output[15:0];
 	wire [3:0] 			spi_addr = spi_output[19:16];
 	reg [7:0] 			spi_counter = 0;
-    reg [23:0] 			datax_r = 0, datay_r = 0, dataz_r = 0, dataz2_r = 0;	
+    reg [23:0] 			datax_r = 0, datay_r = 0, dataz_r = 0, dataz2_r = 0;
     reg [23:0] 			payload_r = 0;
     reg 				broadcast_r = 0;
 	reg					select_adc = 0;
-//    reg [1:0] 			channel_r = 0;	
+//    reg [1:0] 			channel_r = 0;
 	reg [5:0] 			spi_clk_div_r = 0;
 	wire [4:0] 			spi_clk_edge_div = spi_clk_div_r[5:1]; // divided by 2
 	reg [5:0] 			div_ctr = 0;
 	// reg [15:0]			old_sync_reg = 16'hFF00; // default values after reset from dac80504 data sheet
 	// reg [15:0]			new_sync_reg = 0;
-	
+
 	localparam			num_transfer = 1;
 	reg [2:0]			current_transfer = 0;
 	/*
@@ -69,18 +69,18 @@ module gpa_fhdo_iface(
 		0		setup sync_reg
 		1		transfer payload
 	*/
-	
+
 	localparam			SIZE = 3;
 	localparam 			IDLE = 3'b001,START_SPI = 3'b010,OUTPUT_SPI = 3'b011,END_SPI = 3'b100;
-						
+
 	reg [SIZE-1:0]			state = IDLE;
- 
+
 	initial begin
 	   adc_value_o = 0;
 	   fhd_clk_o = 0;
 	   fhd_sdo_o = 0;
 	end
-	
+
 	// Sequence Logic
 	always @(posedge clk) begin
 	   // VN: div_cntr should be synced to incoming data arrival
@@ -88,7 +88,7 @@ module gpa_fhdo_iface(
 	   // jitter in the gradient output
 	  	if ( (div_ctr == spi_clk_div_i) || valid_i ) begin // VN: reset the divider phase with each input payload
 			div_ctr <= 0;
-		end 
+		end
 		else begin
 	      div_ctr <= div_ctr + 1;
 		end
@@ -97,7 +97,7 @@ module gpa_fhdo_iface(
 			state <= START_SPI;
 			payload_r <= data_i[23:0];
 			broadcast_r <= data_i[24];
-//			channel_r <= data_i[26:25];	
+//			channel_r <= data_i[26:25];
 			select_adc <= data_i[30];
 			// new_sync_reg <= 16'h0000; // broadcast off, sync (from ldac) off for all channels
 		end
@@ -149,7 +149,7 @@ module gpa_fhdo_iface(
 						state <= IDLE;
 					end
 					default:state <= IDLE;
-				endcase		   
+				endcase
 			end
 			else begin
 				case(state)
@@ -172,7 +172,7 @@ module gpa_fhdo_iface(
 					   state <= IDLE;
 					end
 					default:state <= IDLE;
-				endcase		   
+				endcase
 			end
 		end
 	end
@@ -225,7 +225,7 @@ module gpa_fhdo_iface(
 			// 	START_SPI: 	fhd_clk_o <= 0;
 			// 	OUTPUT_SPI:	fhd_clk_o <= 0;
 			// 	END_SPI:	fhd_clk_o <= 0;
-			// 	default: 	fhd_clk_o <= 0; 
+			// 	default: 	fhd_clk_o <= 0;
 			// endcase
 		end
    end

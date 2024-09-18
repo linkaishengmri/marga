@@ -1,6 +1,6 @@
 //-----------------------------------------------------------------------------
 // Title         : dac80504_model
-// Project       : OCRA
+// Project       : MaRGA
 //-----------------------------------------------------------------------------
 // File          : ads8684_model.sv
 // Author        : benjamin menkuec
@@ -10,9 +10,9 @@
 // Description :
 // Behavioural model of the TI ADS8684
 //-----------------------------------------------------------------------------
-// Copyright (c) 2020 by OCRA developers This model is the confidential and
-// proprietary property of OCRA developers and the possession or use of this
-// file requires a written license from OCRA developers.
+// Copyright (c) 2020 by MaRGA developers This model is the confidential and
+// proprietary property of MaRGA developers and the possession or use of this
+// file requires a written license from MaRGA developers.
 //------------------------------------------------------------------------------
 
 `ifndef _ADS8684_MODEL_
@@ -31,7 +31,7 @@ module ads8684_model(
 		     );
 
    // internal ADC registers
-   reg [7:0] 			  AUTO_SEQ_EN = 8'hff, 
+   reg [7:0] 			  AUTO_SEQ_EN = 8'hff,
 				  Channel_Power_Down = 8'h00,
 				  Feature_Select = 8'h00,
 				  Channel_0_Input_Range = 8'h00,
@@ -86,9 +86,9 @@ module ads8684_model(
 	 else begin
 	    spi_output <= 16'hFFFF;
 	 end
-	 
-      end 
-      
+
+      end
+
       else begin
 	 spi_counter <= spi_counter + 1;
 	 if (spi_counter < 16) begin
@@ -107,8 +107,8 @@ module ads8684_model(
 	 if (spi_counter == 31) begin
 	    finished_sampling <= 1;
 	 end
-      end 
-   end 
-   
-endmodule 
-`endif 
+      end
+   end
+
+endmodule
+`endif

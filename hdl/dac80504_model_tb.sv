@@ -10,9 +10,9 @@
 // Description :
 // Simple testbench for DAC80504 model
 //-----------------------------------------------------------------------------
-// Copyright (c) 2020 by OCRA developers This model is the confidential and
-// proprietary property of OCRA developers and the possession or use of this
-// file requires a written license from OCRA developers.
+// Copyright (c) 2020 by MaRGA developers This model is the confidential and
+// proprietary property of MaRGA developers and the possession or use of this
+// file requires a written license from MaRGA developers.
 //------------------------------------------------------------------------------
 
 `ifndef _DAC80504_MODEL_TB_
@@ -42,7 +42,7 @@ module dac80504_model_tb;
    reg [23:0] 		word_to_send;
    reg 			err = 0;
    integer 		k;
-   
+
    initial begin
       $dumpfile("icarus_compile/000_dac80504_model_tb.lxt");
       $dumpvars(0, dac80504_model_tb);
@@ -81,7 +81,7 @@ module dac80504_model_tb;
       #10 if (vout0 != 'h8000) begin
 	 $display("%d ns: Unexpected DAC output, expected %x, saw %x.", $time, 0, vout0);
 	 err <= 1;
-      end      
+      end
       #10 csn = 1;
       #10 if (vout0 != 'hbeef) begin
 	 $display("%d ns: Unexpected DAC output, expected %x, saw %x.", $time, 16'hbeef, vout0);
@@ -102,7 +102,7 @@ module dac80504_model_tb;
       #10 if (vout2 != 'h8000) begin
 	 $display("%d ns: Unexpected DAC output, expected %x, saw %x.", $time, 0, vout2);
 	 err <= 1;
-      end      
+      end
       #10 csn = 1;
       #10 if (vout2 != 'h8000) begin
 	 $display("%d ns: Unexpected DAC output, expected %x, saw %x.", $time, 0, vout2);
@@ -112,15 +112,15 @@ module dac80504_model_tb;
       #10 if (vout2 != 'hcafe) begin
 	 $display("%d ns: Unexpected DAC output, expected %x, saw %x.", $time, 'hcafe, vout2);
 	 err <= 1;
-      end      
-      
+      end
+
       #1000 if (err) begin
 	 $display("THERE WERE ERRORS");
 	 $stop; // to return a nonzero error code if the testbench is later scripted at a higher level
       end
       $finish;
    end
-   
+
    dac80504_model UUT(/*autoinst*/
 		      // Outputs
 		      .sdo		(sdo),
@@ -133,6 +133,6 @@ module dac80504_model_tb;
 		      .csn		(csn),
 		      .sclk		(sclk),
 		      .sdi		(sdi));
-   
+
 endmodule // dac80504_model_tb
 `endif //  `ifndef _DAC80504_MODEL_TB_

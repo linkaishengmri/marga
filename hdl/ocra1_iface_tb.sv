@@ -12,9 +12,9 @@
 // Testbench for OCRA1 interface and OCRA1 board model
 //
 //-----------------------------------------------------------------------------
-// Copyright (c) 2020 by OCRA developers This model is the confidential and
-// proprietary property of OCRA developers and the possession or use of this
-// file requires a written license from OCRA developers.
+// Copyright (c) 2020 by MaRGA developers This model is the confidential and
+// proprietary property of MaRGA developers and the possession or use of this
+// file requires a written license from MaRGA developers.
 //------------------------------------------------------------------------------
 
 `ifndef _OCRA1_IFACE_TB_
@@ -26,7 +26,7 @@
  `timescale 1ns/1ns
 
 module ocra1_iface_tb;
-   
+
    /*AUTOREGINPUT*/
    // Beginning of automatic reg inputs (for undeclared instantiated-module inputs)
    reg			clk;			// To UUT of ocra1_iface.v
@@ -54,7 +54,7 @@ module ocra1_iface_tb;
    // End of automatics
 
    reg 			err = 0;
-   
+
    initial begin
       $dumpfile("icarus_compile/000_ocra1_iface_tb.lxt");
       $dumpvars(0, ocra1_iface_tb);
@@ -116,9 +116,9 @@ module ocra1_iface_tb;
       input [23:0] inx, iny, inz, inz2;
       begin
 	 #10 data_i = {5'd0, 2'd0, 1'd0, inx};
-	 valid_i = 1; 
+	 valid_i = 1;
 	 #10 data_i = {5'd0, 2'd1, 1'd0, iny};
-	 #10 data_i = {5'd0, 2'd2, 1'd0, inz}; 	 
+	 #10 data_i = {5'd0, 2'd2, 1'd0, inz};
 	 #10 data_i = {5'd0, 2'd3, 1'd1, inz2};
 	 #10 valid_i = 0;
       end
@@ -139,19 +139,19 @@ module ocra1_iface_tb;
 	    err = 1;
 	 end
 	 if (vouty != vy) begin
-	    $display("%d ns: Y expected %x, read %x.", $time, vy, vouty);	    
+	    $display("%d ns: Y expected %x, read %x.", $time, vy, vouty);
 	    err = 1;
 	 end
 	 if (voutz != vz) begin
-	    $display("%d ns: Z expected %x, read %x.", $time, vz, voutz);	    
+	    $display("%d ns: Z expected %x, read %x.", $time, vz, voutz);
 	    err = 1;
 	 end
 	 if (voutz2 != vz2) begin
-	    $display("%d ns: Z2 expected %x, read %x.", $time, vz2, voutz2);	    
+	    $display("%d ns: Z2 expected %x, read %x.", $time, vz2, voutz2);
 	    err = 1;
 	 end
       end
-   endtask // checkV   
+   endtask // checkV
 
    always #5 clk = !clk; // 100 MHz clock
 
