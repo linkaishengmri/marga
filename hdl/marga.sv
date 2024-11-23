@@ -255,19 +255,26 @@ module marga
 	default: rx1_iq <= 32'h80007fff; // max negative and positive
       endcase // case (rx0_dds_source)
    end
-
+	
+   // TODO: add phase written bits **********************************************
+   wire [2:0] ph_written_direct;
+   assign ph_written_direct[2:0] = gates_leds[5:3];
    assign {dds0_phase_axis_tvalid_o, dds1_phase_axis_tvalid_o, dds2_phase_axis_tvalid_o} = 3'b111;
 
    always @(posedge clk) begin
-      if (dds0_phase_clear) dds0_phase_full <= 0;
+      if (dds0_phase_clear && ~ph_written_direct[0]) dds0_phase_full <= 0;
+      else if(~dds0_phase_clear && ph_written_direct[0]) dds0_phase_full <= {lo0_phase_msb[14:0], lo0_phase_lsb};
       else dds0_phase_full <= dds0_phase_full + {lo0_phase_msb[14:0], lo0_phase_lsb};
 
-      if (dds1_phase_clear) dds1_phase_full <= 0;
+      if (dds1_phase_clear && ~ph_written_direct[1]) dds1_phase_full <= 0;
+      else if(~dds1_phase_clear && ph_written_direct[1]) dds1_phase_full <= {lo1_phase_msb[14:0], lo1_phase_lsb};
       else dds1_phase_full <= dds1_phase_full + {lo1_phase_msb[14:0], lo1_phase_lsb};
 
-      if (dds2_phase_clear) dds2_phase_full <= 0;
+      if (dds2_phase_clear && ~ph_written_direct[2]) dds2_phase_full <= 0;
+      else if(~dds2_phase_clear && ph_written_direct[2]) dds2_phase_full <= {lo2_phase_msb[14:0], lo2_phase_lsb};
       else dds2_phase_full <= dds2_phase_full + {lo2_phase_msb[14:0], lo2_phase_lsb};
    end
+   // TODO: end ****************************************************************\
 
    // TX and RX gates
    assign tx_gate_o = gates_leds[0], rx_gate_o = gates_leds[1], trig_o = gates_leds[2], leds_o = gates_leds[15:8];
