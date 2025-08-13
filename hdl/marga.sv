@@ -40,6 +40,8 @@
  `include "marbuffer.sv"
  `include "ocra1_iface.sv"
  `include "gpa_fhdo_iface.sv"
+ `include "rx_gain_ctrl.sv"
+
 
  `timescale 1ns / 1ns
 
@@ -67,6 +69,12 @@ module marga
 
     // Outputs to the attenuator chip on the ocra1
     // TODO
+
+    // Rx gain control
+    output 				  gain_si_o,
+    output 				  gain_clk_o,
+    output 				  gain_le_o,
+    output [2:0] 			  gain_sel_o,
 
     // Outputs to the TX and RX digital gates
     output 				  tx_gate_o,
@@ -273,6 +281,14 @@ module marga
    // TX and RX gates
    assign tx_gate_o = gates_leds[0], rx_gate_o = gates_leds[1], trig_o = gates_leds[2], leds_o = gates_leds[15:8];
 
+   // RX gain control
+   wire [5:0] rx_gain;
+   wire rx_gain_write;
+   wire rx_gain_sel;
+   assign rx_gain[5:0] = rx_ctrl[15:10];
+   assign rx_gain_write = gates_leds[3];
+   assign rx_gain_sel = gates_leds[4];
+
    // wire [15:0]
 
    // for the ocra1, data can be written even while it's outputting to
@@ -312,7 +328,17 @@ module marga
 			       .valid_i		(fhdo_data_valid),
 			       .fhd_sdi_i	(fhdo_sdi_i));
 
-
+   rx_gain_ctrl #(.DIV(40), .LE_PULSE_CYCLES(40))
+   rx_gain_ctrl_if(
+      .clk(clk),
+      .rx_gain_write(rx_gain_write),
+      .rx_gain(rx_gain),
+      .rx_gain_sel(rx_gain_sel),
+      .gain_si_o(gain_si_o),
+      .gain_clk_o(gain_clk_o),
+      .gain_le_o(gain_le_o),
+      .gain_sel_o(gain_sel_o)
+   );
    ///////////////////////// MARDECODE ////////////////////////////
 
    mardecode #(.BUFS(24), .RX_FIFO_LENGTH(RX_FIFO_LENGTH))
