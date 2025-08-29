@@ -76,6 +76,9 @@ module marga
     output 				  gain_le_o,
     output [2:0] 			  gain_sel_o,
 
+    output reg 			  run_o,
+    output reg 			  trig_waiting_o,
+
     // Outputs to the TX and RX digital gates
     output 				  tx_gate_o,
     output 				  rx_gate_o,
@@ -357,6 +360,8 @@ module marga
 	.rx1_valid(rx1_axis_tvalid_i),
 	.rx1_ready(rx1_axis_tready_o),
 
+   .state_is_not_idle_or_halt(run_o),
+   .state_is_trig_forever(trig_waiting_o),
 	// bus inputs
 	.S_AXI_ACLK			(s0_axi_aclk),
 	.S_AXI_ARESETN			(s0_axi_aresetn),
