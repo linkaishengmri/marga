@@ -251,9 +251,9 @@ module marga
 	dds1_phase_clear = lo1_phase_msb[15],
 	dds2_phase_clear = lo2_phase_msb[15];
    reg [30:0] dds0_phase_full = 0, dds1_phase_full = 0, dds2_phase_full = 0;
-   // assign dds0_phase_axis_tdata_o = dds0_phase_full[30:7],
-   //   dds1_phase_axis_tdata_o = dds1_phase_full[30:7],
-   //   dds2_phase_axis_tdata_o = dds2_phase_full[30:7];
+   assign dds0_phase_axis_tdata_o = dds0_phase_full[30:7],
+     dds1_phase_axis_tdata_o = dds1_phase_full[30:7],
+     dds2_phase_axis_tdata_o = dds2_phase_full[30:7];
 
    // RX LO source control
    reg [31:0] dds0_iq = 0, dds1_iq = 0, dds2_iq = 0, rx0_iq = 0, rx1_iq = 0;
@@ -281,16 +281,17 @@ module marga
    end
 
    assign {dds0_phase_axis_tvalid_o, dds1_phase_axis_tvalid_o, dds2_phase_axis_tvalid_o} = 3'b111;
+   wire [30:0] vib_ampl_tmp = { {15{phase_add_axis_tdata_i[15]}}, phase_add_axis_tdata_i};
 
    always @(posedge clk) begin
       if (dds0_phase_clear) dds0_phase_full <= 0;
-      else dds0_phase_full <= dds0_phase_full + {lo0_phase_msb[14:0], lo0_phase_lsb};
+      else dds0_phase_full <= (dds0_phase_full + vib_ampl_tmp) + {lo0_phase_msb[14:0], lo0_phase_lsb};
 
       if (dds1_phase_clear) dds1_phase_full <= 0;
-      else dds1_phase_full <= dds1_phase_full + {lo1_phase_msb[14:0], lo1_phase_lsb};
+      else dds1_phase_full <= (dds1_phase_full + vib_ampl_tmp) + {lo1_phase_msb[14:0], lo1_phase_lsb};
 
       if (dds2_phase_clear) dds2_phase_full <= 0;
-      else dds2_phase_full <= dds2_phase_full + {lo2_phase_msb[14:0], lo2_phase_lsb};
+      else dds2_phase_full <= (dds2_phase_full + vib_ampl_tmp) + {lo2_phase_msb[14:0], lo2_phase_lsb};
    end
 
    // TX and RX gates
@@ -315,6 +316,8 @@ module marga
    
    reg [31:0] dds_vib_phase;
    reg [31:0] dds_vib_phase_full;
+   //assign leds_o = phase_add_axis_tdata_i[15:8];
+   assign trig_waiting_o = dds_vib_phase_full[31]; // debug for vibration DDS signed bit
    assign dds_vib_phase_axis_tdata_o = dds_vib_phase_full[31:8];
    assign {dds_vib_phase_axis_tvalid_o, vib_ampl_axis_tvalid_o} = 2'b11;
    always @(posedge clk) begin
@@ -333,18 +336,7 @@ module marga
       else
          dds_vib_phase <= dds_vib_phase + vib_pinc_reg;
    end
-   wire signed [31:0] phase_add_32b = {{16{phase_add_axis_tdata_i[15]}}, phase_add_axis_tdata_i};
-   wire signed [31:0] dds0_phase_full_32b = {1'b0, dds0_phase_full},
-                      dds1_phase_full_32b = {1'b0, dds1_phase_full},
-                      dds2_phase_full_32b = {1'b0, dds2_phase_full};
-   wire signed [31:0] dds0_phase_full_added_32b = phase_add_32b + dds0_phase_full_32b,
-                      dds1_phase_full_added_32b = phase_add_32b + dds1_phase_full_32b,
-                      dds2_phase_full_added_32b = phase_add_32b + dds2_phase_full_32b;
-   always @(posedge clk) begin
-      dds0_phase_axis_tdata_o <= dds0_phase_full_added_32b[30:7];
-      dds1_phase_axis_tdata_o <= dds1_phase_full_added_32b[30:7];
-      dds2_phase_axis_tdata_o <= dds2_phase_full_added_32b[30:7];
-   end
+
    // end of vibration control - TODO
 
    // for the ocra1, data can be written even while it's outputting to
@@ -414,7 +406,7 @@ module marga
 	.rx1_ready(rx1_axis_tready_o),
 
    .state_is_not_idle_or_halt(run_o),
-   .state_is_trig_forever(trig_waiting_o),
+   .state_is_trig_forever(),//trig_waiting_o),
 	// bus inputs
 	.S_AXI_ACLK			(s0_axi_aclk),
 	.S_AXI_ARESETN			(s0_axi_aresetn),
