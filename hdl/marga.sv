@@ -320,7 +320,7 @@ module marga
    reg [63:0] dds_vib_phase_full;
    //assign leds_o = phase_add_axis_tdata_i[15:8];
    assign trig_waiting_o = dds_vib_phase_full[63]; // debug for vibration DDS signed bit
-   assign dds_vib_phase_axis_tdata_o = dds_vib_phase_full[63:56];
+   assign dds_vib_phase_axis_tdata_o = dds_vib_phase_full[63:40];
    assign {dds_vib_phase_axis_tvalid_o, vib_ampl_axis_tvalid_o} = 2'b11;
    always @(posedge clk) begin
       dds_vib_phase_full <= dds_vib_phase + vib_poff_reg;
