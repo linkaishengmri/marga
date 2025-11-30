@@ -306,27 +306,35 @@ module marga
    assign rx_gain_sel = gates_leds[4];
 
    // vibration control - TODO
-   reg [31:0]            vib_pinc_reg;
-   reg [31:0]            vib_poff_reg;
+   reg [63:0]            vib_pinc_reg;
+   reg [63:0]            vib_poff_reg;
    
    wire vib_rst = vib_gate[15];
    wire amp_valid = vib_gate[14];
    wire poff_valid = vib_gate[13];
    wire pinc_valid = vib_gate[12];
-   
-   reg [31:0] dds_vib_phase;
-   reg [31:0] dds_vib_phase_full;
+   wire poff_high_valid = vib_gate[11];
+   wire pinc_high_valid = vib_gate[10];
+
+   reg [63:0] dds_vib_phase;
+   reg [63:0] dds_vib_phase_full;
    //assign leds_o = phase_add_axis_tdata_i[15:8];
    assign trig_waiting_o = dds_vib_phase_full[31]; // debug for vibration DDS signed bit
-   assign dds_vib_phase_axis_tdata_o = dds_vib_phase_full[31:8];
+   assign dds_vib_phase_axis_tdata_o = dds_vib_phase_full[63:56];
    assign {dds_vib_phase_axis_tvalid_o, vib_ampl_axis_tvalid_o} = 2'b11;
    always @(posedge clk) begin
       dds_vib_phase_full <= dds_vib_phase + vib_poff_reg;
       if (pinc_valid)
-         vib_pinc_reg <= {vib_pinc_poff_msb, vib_pinc_poff_lsb};
+         vib_pinc_reg[31:0] <= {vib_pinc_poff_msb, vib_pinc_poff_lsb};
+
+      if (pinc_high_valid)
+         vib_pinc_reg[63:32] <= {vib_pinc_poff_msb, vib_pinc_poff_lsb};
 
       if (poff_valid)
-         vib_poff_reg <= {vib_pinc_poff_msb, vib_pinc_poff_lsb};
+         vib_poff_reg[31:0] <= {vib_pinc_poff_msb, vib_pinc_poff_lsb};
+      
+      if (poff_high_valid)
+         vib_poff_reg[63:32] <= {vib_pinc_poff_msb, vib_pinc_poff_lsb};
 
       if (amp_valid)
          vib_ampl_axis_tdata_o <= vib_pinc_poff_lsb;
