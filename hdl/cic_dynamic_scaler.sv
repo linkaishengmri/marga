@@ -5,7 +5,7 @@ module cic_dynamic_scaler #(
     parameter integer OUT_WIDTH = 64       // Output width (32 I + 32 Q)
 )(
     input  wire                      clk,
-    input  wire                      rst_n,      // Synchronous Reset (Low Active assumed)
+    input  wire                      rst_n,       // Synchronous Reset (Low Active assumed)
 
     // --- Channel 0 Input ---
     input  wire                      rx0_axis_tvalid_i,
@@ -39,20 +39,32 @@ module cic_dynamic_scaler #(
     localparam integer N = 6;
     localparam integer HALF_WIDTH = RX_WIDTH / 2; // 112
 
-    // LUT / Shift Calculation Logic
+    // -----------------------------------------------------------
+    // Modified Function: Calculates N * round(log2(rate))
+    // -----------------------------------------------------------
     function [7:0] calc_shift_amount;
         input [15:0] rate;
         integer i;
-        reg [4:0] idx; 
+        reg [4:0] msb_idx; 
+        reg       round_up;
         begin
-            idx = 0;
-            // Priority Encoder to find MSB location
+            msb_idx = 0;
+            round_up = 0;
+            // Priority Encoder to find MSB location and check next bit
             for (i = 0; i < 16; i = i + 1) begin
                 if (rate[i]) begin
-                    idx = i[4:0]; // Cast integer loop var to 5-bit
+                    msb_idx = i[4:0]; // Cast integer loop var to 5-bit
+                    
+                    // Check the bit immediately below the MSB (i-1)
+                    // If it is 1, it means the mantissa is >= 1.5, so we round up.
+                    if (i > 0)
+                        round_up = rate[i-1];
+                    else
+                        round_up = 0;
                 end
             end
-            calc_shift_amount = idx * N;
+            // Result = (Floor_Log2 + Round_Flag) * N
+            calc_shift_amount = (msb_idx + round_up) * N;
         end
     endfunction
 
