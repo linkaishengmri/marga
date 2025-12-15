@@ -100,12 +100,12 @@ module marga
 
     // streaming inputs to RX0 FIFO
     input 				  rx0_axis_tvalid_i,
-    input [63:0] 			  rx0_axis_tdata_i,
+    input [RX_WIDTH-1:0] 			  rx0_axis_tdata_i,
     output 				  rx0_axis_tready_o,
 
     // streaming inputs to RX1 FIFO
     input 				  rx1_axis_tvalid_i,
-    input [63:0] 			  rx1_axis_tdata_i,
+    input [RX_WIDTH-1:0] 			  rx1_axis_tdata_i,
     output 				  rx1_axis_tready_o,
 
     // RX LO source select
@@ -195,6 +195,8 @@ module marga
    parameter integer 			      C_S0_AXI_DATA_WIDTH = 32;
    parameter integer 			      C_S0_AXI_ADDR_WIDTH = 19;
    parameter integer			      RX_FIFO_LENGTH = 16384;
+   parameter integer			      RX_WIDTH = 224;
+
    wire 				      clk = s0_axi_aclk;
 
    // Gradient control lines
@@ -292,7 +294,44 @@ module marga
    assign rx_gain_write = gates_leds[3];
    assign rx_gain_sel = gates_leds[4];
 
-   // wire [15:0]
+    wire w_rx0_valid;
+    wire w_rx0_tready;
+    wire [63:0] w_rx0_data;
+    wire w_rx1_valid;
+    wire [63:0] w_rx1_data;
+    wire w_rx1_tready;
+    // Example 1: Use the default parameter RX_WIDTH=224 and OUT_WIDTH=64
+    cic_dynamic_scaler #(
+        .RX_WIDTH (224),  
+        .OUT_WIDTH(64)    
+    ) 
+    u_cic_scaler (
+        .clk                       (clk),
+        .rst_n                     (s0_axi_aresetn),
+
+         // upstream RX0 interface
+        .rx0_axis_tvalid_i         (rx0_axis_tvalid_i),
+        .rx0_axis_tready_o         (rx0_axis_tready_o), 
+        .rx0_axis_tdata_i          (rx0_axis_tdata_i),
+         // downstream RX0 interface
+        .rx0_axis_tvalid_o         (w_rx0_valid),
+        .rx0_axis_tready_i         (w_rx0_tready), 
+        .rx0_axis_tdata_o          (w_rx0_data),
+         // upstream RX1 interface
+        .rx1_axis_tvalid_i         (rx1_axis_tvalid_i),
+        .rx1_axis_tready_o         (rx1_axis_tready_o), 
+        .rx1_axis_tdata_i          (rx1_axis_tdata_i),
+         // downstream RX1 interface
+        .rx1_axis_tvalid_o         (w_rx1_valid),
+        .rx1_axis_tready_i         (w_rx1_tready), 
+        .rx1_axis_tdata_o          (w_rx1_data),
+         // rate control inputs
+        .rx0_rate_axis_tdata_i     (rx0_rate_axis_tdata_o),
+        .rx0_rate_axis_tvalid_i    (rx0_rate_axis_tvalid_o),
+        .rx1_rate_axis_tdata_i     (rx1_rate_axis_tdata_o),
+        .rx1_rate_axis_tvalid_i    (rx1_rate_axis_tvalid_o)
+    );
+
 
    // for the ocra1, data can be written even while it's outputting to
    // SPI - for the fhd, this isn't the case. So don't use the
@@ -352,13 +391,13 @@ module marga
 	.data_o(mrd_data),
 	.stb_o(mrd_stb),
 
-	.rx0_data(rx0_axis_tdata_i[63:0]),
-	.rx0_valid(rx0_axis_tvalid_i),
-	.rx0_ready(rx0_axis_tready_o),
+	.rx0_data(w_rx0_data),
+	.rx0_valid(w_rx0_valid),
+	.rx0_ready(w_rx0_tready),
 
-	.rx1_data(rx1_axis_tdata_i[63:0]),
-	.rx1_valid(rx1_axis_tvalid_i),
-	.rx1_ready(rx1_axis_tready_o),
+	.rx1_data(w_rx1_data),
+	.rx1_valid(w_rx1_valid),
+	.rx1_ready(w_rx1_tready),
 
    .state_is_not_idle_or_halt(run_o),
    .state_is_trig_forever(trig_waiting_o),
