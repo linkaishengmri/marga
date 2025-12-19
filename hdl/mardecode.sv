@@ -31,9 +31,9 @@
 module mardecode #
   (
    parameter integer C_S_AXI_DATA_WIDTH = 32,
-   parameter integer C_S_AXI_ADDR_WIDTH = 19,
+   parameter integer C_S_AXI_ADDR_WIDTH = 17,
    parameter BUFS = 24, // max 128; probably needs pipelining with that many
-   parameter RX_FIFO_LENGTH = 16384 // must be power of 2
+   parameter RX_FIFO_LENGTH = 8192 // must be power of 2
    )
    (
     // // Users to add ports here

@@ -193,9 +193,9 @@ module marga
 
    // Parameters of Axi Slave Bus Interface S0_AXI
    parameter integer 			      C_S0_AXI_DATA_WIDTH = 32;
-   parameter integer 			      C_S0_AXI_ADDR_WIDTH = 19;
-   parameter integer			      RX_FIFO_LENGTH = 16384;
-   parameter integer			      RX_WIDTH = 224;
+   parameter integer 			      C_S0_AXI_ADDR_WIDTH = 17;
+   parameter integer			      RX_FIFO_LENGTH = 8192;
+   parameter integer			      RX_WIDTH = 208;
 
    wire 				      clk = s0_axi_aclk;
 
@@ -302,7 +302,7 @@ module marga
     wire w_rx1_tready;
     // Example 1: Use the default parameter RX_WIDTH=224 and OUT_WIDTH=64
     cic_dynamic_scaler #(
-        .RX_WIDTH (224),  
+        .RX_WIDTH (RX_WIDTH),  
         .OUT_WIDTH(64)    
     ) 
     u_cic_scaler (
