@@ -41,12 +41,12 @@ module rx_gain_ctrl #(
     output reg         gain_si_o,
     output reg         gain_clk_o,
     output reg         gain_le_o,
-    output reg [2:0]   gain_sel_o
+    output reg [2:0]   gain_sel_o // not used
 );
     // ------------------------------------------------------------------------
     // Internal latches for address/value (no reset used per request)
     // ------------------------------------------------------------------------
-    reg [2:0] rx_gain_addr;
+    reg [5:0] rx_gain_addr;
     reg [7:0] rx_gain_value;
 
     // previous-cycle sample of rx_gain_write (one-clock delay), keep the delayed
@@ -55,7 +55,7 @@ module rx_gain_ctrl #(
 
     // combinational 16-bit word to write
     wire [15:0] rx_gain_to_write;
-    assign rx_gain_to_write = {5'b0, rx_gain_addr, rx_gain_value};
+    assign rx_gain_to_write = {2'b00, rx_gain_addr, rx_gain_value};
 
     // shift register loaded at start of transfer
     reg [15:0] shift_reg;
@@ -90,10 +90,10 @@ module rx_gain_ctrl #(
     always @(posedge clk) begin
         rx_gain_write_r <= rx_gain_write; // one-cycle delayed copy (keep this)
         if (rx_gain_sel) begin
-            rx_gain_addr <= rx_gain[2:0];
+            rx_gain_addr <= rx_gain[5:0];
             gain_sel_o   <= rx_gain[5:3];
         end else begin
-            rx_gain_value <= {1'b0, rx_gain, 1'b0};
+            rx_gain_value <= {2'b00, rx_gain};
         end
     end
 
