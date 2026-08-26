@@ -484,6 +484,13 @@ module mardecode #
 	end
       endcase // case (state)
 
+      // Emergency stop: force the FSM back to IDLE from any state so the
+      // server can safely zero the outputs afterwards.
+      if (stop_fsm) begin
+         state <= IDLE;
+         mar_bram_raddr <= 0;
+      end
+
       // monitoring/error info
       // slv_reg4 <= {{(32-OPT_MEM_ADDR_BITS-STATE_BITS){1'b0}}, mar_bram_raddr_r2, state};
       slv_reg4 <= { {8-STATE_BITS{1'd0}}, state,
