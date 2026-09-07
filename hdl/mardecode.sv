@@ -324,7 +324,21 @@ module mardecode #
 	 );
 
    // // TODO: can add pipelining here if needed
-   assign data_o = buf_data;
+   // While the emergency-stop control bit is latched, clamp every digital
+   // RF/RX output at the source.  This prevents an older queued marbuffer
+   // value from reappearing while the PS drains the buffers. Gradient buffers
+   // 0..2 remain writable so the server can issue explicit safe-DAC commands.
+   genvar output_idx;
+   generate
+      for (output_idx = 0; output_idx < BUFS; output_idx = output_idx + 1) begin: safe_output_clamp
+         if (((output_idx >= 5) && (output_idx <= 8)) ||
+             (output_idx == 15) || (output_idx == 16)) begin
+            assign data_o[output_idx] = stop_fsm ? 16'd0 : buf_data[output_idx];
+         end else begin
+            assign data_o[output_idx] = buf_data[output_idx];
+         end
+      end
+   endgenerate
    assign stb_o = buf_stb;
 
    reg [31:0] mar_bram [2**OPT_MEM_ADDR_BITS-1:0]; // main BRAM; 65536 locations by default
